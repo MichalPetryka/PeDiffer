@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,8 +20,10 @@ public static class Program
         return 0;
     }
 
-    public static string Format(Dictionary<string, string> data)
+    private static string Format(Dictionary<string, string> data)
     {
+        KeyValuePair<string, string>[] array = [.. data];
+        array.Sort((first, second) => first.Key.CompareTo(second.Key, StringComparison.Ordinal));
         return string.Join("\r\n\r\n", data.Select(method => $"{method.Key}\r\n{method.Value}"));
     }
 }

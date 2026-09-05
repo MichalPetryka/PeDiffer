@@ -15,11 +15,11 @@ internal sealed unsafe class DataModule : IDisposable
     private SafeFileHandle? _fileHandle;
     private Disposable<HANDLE>? _mappingHandle;
     private Disposable<nuint>? _viewHandle;
+    private readonly uint _size;
 
     public byte* Data => (byte*)_viewHandle!.Value;
-    private readonly uint Size;
 
-    public ReadOnlySpan<byte> Span => new(Data, checked((int)Size));
+    public ReadOnlySpan<byte> Span => new(Data, checked((int)_size));
 
     public Architecture Architecture { get; }
 
@@ -57,9 +57,9 @@ internal sealed unsafe class DataModule : IDisposable
             if (Data != info.AllocationBase)
                 throw new InvalidOperationException();
 
-            (Architecture, Size) = PeHelpers.GetPeImageInfo(new ReadOnlySpan<byte>(Data, checked((int)info.RegionSize)));
+            (Architecture, _size) = PeHelpers.GetPeImageInfo(new ReadOnlySpan<byte>(Data, checked((int)info.RegionSize)));
 
-            if (Size > info.RegionSize)
+            if (_size > info.RegionSize)
                 throw new InvalidOperationException();
         }
         finally

@@ -3,20 +3,18 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
     <LangVersion>14</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>enable</Nullable>
 
     <PublishAOT>true</PublishAOT>
     <OptimizationPreference>Speed</OptimizationPreference>
     <IlcInstructionSet>x86-64-v3</IlcInstructionSet>
-
-    <Nullable>enable</Nullable>
-
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <DirectPInvoke Include="Kernel32" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AsmArm64" Version="2.1.0" />
+    <PackageReference Include="AsmArm64" Version="2.3.0" />
     <PackageReference Include="Iced" Version="1.21.0" />
     <PackageReference Include="TerraFX.Interop.Windows" Version="10.0.26100.6" />
   </ItemGroup>

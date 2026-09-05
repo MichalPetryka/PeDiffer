@@ -14,7 +14,7 @@ public static unsafe class PdbParser
     [DllImport("msdia140")]
     private static extern int DllGetClassObject(Guid* rclsid, Guid* riid, void** ppv);
 
-    public static (List<(string name, (int start, int length) range)> methods, ((ulong start, ulong end) range, string name)[] symbols) ReadSymbols(string pdb)
+    public static PeSymbol[] ReadSymbols(string pdb)
     {
         using ComPtr<IClassFactory> factory = new();
         Marshal.ThrowExceptionForHR(DllGetClassObject(Windows.__uuidof<DiaSource>(), Windows.__uuidof<IClassFactory>(), (void**)factory.GetAddressOf()));
@@ -41,8 +41,7 @@ public static unsafe class PdbParser
         int count;
         Marshal.ThrowExceptionForHR(publicSymbols.Get()->get_Count(&count));
 
-        List<((ulong start, ulong end) range, string name)> symbols = [];
-        List<(string name, (int start, int length) range)> methods = [];
+        List<PeSymbol> symbols = [];
 
         uint fetched;
         using ComPtr<IDiaSymbol> publicSymbol = new();
@@ -57,18 +56,12 @@ public static unsafe class PdbParser
             using Bstr name = new();
             Marshal.ThrowExceptionForHR(publicSymbol.Get()->get_name(name.GetAddressOf()));
 
-            string symbolName = name.ToString();
-
-            symbols.Add(((rva, rva + length), symbolName));
-
             BOOL bFunction;
             Marshal.ThrowExceptionForHR(publicSymbol.Get()->get_function(&bFunction));
 
-            if (!bFunction)
-                continue;
-
-            methods.Add((symbolName, (checked((int)rva), checked((int)length))));
+            symbols.Add(new PeSymbol(name.ToString(), rva, length, bFunction));
         }
-        return (methods, symbols.ToArray());
+
+        return [.. symbols];
     }
 }
