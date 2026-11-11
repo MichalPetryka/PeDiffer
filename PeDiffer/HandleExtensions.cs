@@ -14,10 +14,7 @@ internal static unsafe class HandleExtensions
 
             bool success = false;
             handle.DangerousAddRef(ref success);
-            if (!success)
-                throw new InvalidOperationException();
-
-            return (void*)handle.DangerousGetHandle();
+            return success ? (void*)handle.DangerousGetHandle() : throw new InvalidOperationException();
         }
     }
 }

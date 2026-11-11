@@ -38,7 +38,7 @@ internal static class Disassembler
 
         ReadOnlySpan<byte> bytes = module.Span;
 
-        Dictionary<string, string> results = new();
+        Dictionary<string, string> results = [];
         foreach (PeSymbol symbol in symbols)
         {
             if (!symbol.Function)
